@@ -4,7 +4,7 @@ function fetchProfile(email) {
     let settings = {
         method: 'GET',
         headers: {
-            sessiontoken: localStorage.getItem('token')
+            sessiontoken : localStorage.getItem('token')
         }
     };
 
@@ -39,7 +39,7 @@ function fetchEmail() {
     let settings = {
         method: 'GET',
         headers: {
-            sessiontoken: localStorage.getItem('token')
+            sessiontoken : localStorage.getItem('token')
         }
     };
 

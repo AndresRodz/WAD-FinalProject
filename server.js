@@ -107,12 +107,12 @@ app.get('/api/users/validate', validateSession, (req, res) => {
 
 //Endpoint called from profile.js to fetch the active email in the session token
 app.get('/api/users/email', (req, res) => {
-    const {sessionToken} = req.headers;
+    const {sessiontoken} = req.headers;
     console.log(req.headers);
-    console.log(sessionToken);
+    console.log(sessiontoken);
     //EL HEADER ESTA TOMANDO EL VALOR DE UNDEFINED Y NO SE POR QUE VERGAS
 
-    jsonwebtoken.verify(sessionToken, SECRET_TOKEN, (err, decoded) => {
+    jsonwebtoken.verify(sessiontoken, SECRET_TOKEN, (err, decoded) => {
         if(err) {
             res.statusMessage = "Session expired!";
             return res.status(400).end();
@@ -160,7 +160,10 @@ app.listen(PORT, () => {
             if(err) {
                 return reject(err);
             }
-            return resolve();
+            else{
+                console.log("Database connected successfully.")
+                return resolve();
+            }
         })
     })
     .catch(err => {
