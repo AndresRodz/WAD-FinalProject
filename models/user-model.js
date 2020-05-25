@@ -34,7 +34,7 @@ const Users = {
             }); 
     },
     getUserByEmail: function(email) {
-        return userModel
+        return usersCollection
             .findOne({email})
             .then(user => {
                 return user;

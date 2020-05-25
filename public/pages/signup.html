@@ -7,7 +7,17 @@
         <link href="./css/index.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
-        <form class="loginForm">
+        <form class="signupForm">
+            <label for="userFirstName">
+                First name:
+            </label>
+            <input type="text" id="userFirstName" />
+
+            <label for="userLastName">
+                Last name:
+            </label>
+            <input type="text" id="userLastName" />
+
             <label for="userEmail">
                 Email:
             </label>
@@ -19,18 +29,13 @@
             <input type="password" id="userPassword" />
 
             <button type="submit">
-                Login
+                Sign up
             </button>
         </form>
-
-        <label>Still not a user?</label>
-        <button onclick="redirectSignup(); return false;">
-            Sign up
-        </button>
 
         <section class="results">
 
         </section>
-        <script src="./js/index.js"></script>
+        <script src="./../js/signup.js"></script>
     </body>
 </html>
