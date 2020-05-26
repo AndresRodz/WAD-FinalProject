@@ -17,6 +17,10 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    admin: {
+        type: Boolean,
+        required: true
     }
 });
 
@@ -42,6 +46,16 @@ const Users = {
             .catch(err => {
                 throw new Error(err.message);
             }); 
+    },
+    updateUser: function(email, update) {
+        return usersCollection
+            .findOneAndUpdate({email: email}, {$set: update})
+            .then(updatedUser => {
+                return updatedUser;
+            })
+            .catch(err => {
+                return err;
+            });
     }
 };
 

@@ -1,4 +1,4 @@
-/*let url = "/api/users/validate";
+let url = "/api/users/validate";
 
 let settings = {
     method: 'GET',
@@ -23,4 +23,4 @@ fetch(url, settings)
         console.log("Not a valid session");
         console.log(err.message);
         window.location.href = "./../index.html";
-    });*/
+    });

@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jsonwebtoken = require('jsonwebtoken');
-const {DATABASE_URL, PORT, SECRET_TOKEN} = require('./config');
+const {DATABASE_URL, PORT, SECRET_TOKEN, ADMIN_TOKEN} = require('./config');
 const {Users} = require('./models/user-model');
 const cors = require('./middleware/cors');
 const validateSession = require('./middleware/validateSession');
@@ -19,11 +19,20 @@ app.use(morgan('dev'));
 
 //Endpoint called from signup.js to sign up and go to index.html
 app.post('/api/users/signup', jsonParser, (req, res) => {
-    let {firstName, lastName, email, password} = req.body;
+    let {firstName, lastName, email, password, token} = req.body;
 
-    if(!firstName || !lastName || !email || !password) {
+    if(!firstName || !lastName || !email || !password || !token) {
         res.statusMessage = "Parameter missing in the body of the request.";
         return res.status(406).end();
+    }
+
+    let admin;
+
+    if(token == ADMIN_TOKEN) {
+        admin = true;
+    }
+    else {
+        admin = false;
     }
 
     bcrypt.hash(password, 10)
@@ -31,8 +40,9 @@ app.post('/api/users/signup', jsonParser, (req, res) => {
             let newUser = {
                 firstName,
                 lastName,
+                email,
                 password: hashedPassword,
-                email
+                admin: admin
             };
 
         Users
@@ -73,7 +83,7 @@ app.post('/api/users/login', jsonParser, (req, res) => {
                                 email: user.email
                             };
 
-                            jsonwebtoken.sign(userData, SECRET_TOKEN, {expiresIn:'1m'}, (err, token) => {
+                            jsonwebtoken.sign(userData, SECRET_TOKEN, {expiresIn:'5m'}, (err, token) => {
                                 if(err) {
                                     res.statusMessage = "Something went wrong with generating the token!";
                                     return res.status(400).end();
@@ -102,15 +112,7 @@ app.post('/api/users/login', jsonParser, (req, res) => {
 
 //Endpoint called from each .html to validate the user session
 app.get('/api/users/validate', validateSession, (req, res) => {
-    console.log("Validating session...");
-});
-
-//Endpoint called from profile.js to fetch the active email in the session token
-app.get('/api/users/email', (req, res) => {
     const {sessiontoken} = req.headers;
-    console.log(req.headers);
-    console.log(sessiontoken);
-    //EL HEADER ESTA TOMANDO EL VALOR DE UNDEFINED Y NO SE POR QUE VERGAS
 
     jsonwebtoken.verify(sessiontoken, SECRET_TOKEN, (err, decoded) => {
         if(err) {
@@ -122,8 +124,22 @@ app.get('/api/users/email', (req, res) => {
     });
 });
 
-//Endpoint called from profile.js to fetch profile information
-app.get('/api/users/profile', (jsonParser, validateSession), (req, res) => {
+//Endpoint called from profile.js and editProfile.js to fetch the active email in the session token
+app.get('/api/users/email', (req, res) => {
+    const {sessiontoken} = req.headers;
+
+    jsonwebtoken.verify(sessiontoken, SECRET_TOKEN, (err, decoded) => {
+        if(err) {
+            res.statusMessage = "Session expired!";
+            return res.status(400).end();
+        }
+
+        return res.status(200).json(decoded);
+    });
+});
+
+//Endpoint called from profile.js and editProfile.js to fetch profile information
+app.get('/api/users/profile', validateSession, (req, res) => {
     let email = req.query.email;
 
     if(!email) {
@@ -145,6 +161,72 @@ app.get('/api/users/profile', (jsonParser, validateSession), (req, res) => {
             res.statusMessage = "Something is wrong with the database, try again later";
             return res.status(500).end();
         });
+});
+
+app.patch('/api/users/update', (validateSession, jsonParser), (req, res) => {
+    console.log(req.body);
+    let firstName = req.body.firstName;
+    let lastName = req.body.lastName;
+    let email = req.body.email;
+    let password = req.body.password;
+
+    let updatedUser = {};
+
+    if(firstName) {
+        console.log("entro firstname");
+        updatedUser.firstName = firstName;
+    }
+    if(lastName) {
+        console.log("entro lastname");
+        updatedUser.lastName = lastName;
+    }
+    if(email) {
+        console.log("entro email");
+        updatedUser.email = email;
+    }
+    if(password) {
+        console.log("entro password");
+        bcrypt.hash(password, 10)
+            .then(hashedPassword => {
+                console.log("entro hashed");
+                updatedUser.password = hashedPassword;
+
+            Users
+                .updateUser(email, updatedUser)
+                .then(result => {
+                    if(result.errmsg) {
+                        res.statusMessage = "The 'email' was not found in the users list";
+                        return res.status(409).end();
+                    }
+                    res.statusMessage = "The user was updated successfully";
+                    return res.status(202).json(result);
+                })
+                .catch(err => {
+                    res.statusMessage = "Something is wrong with the database, try again later";
+                    return res.status(500).end();
+                });
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+    else {
+        Users
+            .updateUser(email, updatedUser)
+            .then(result => {
+                if(result.errmsg) {
+                    res.statusMessage = "The 'email' was not found in the users list";
+                    return res.status(409).end();
+                }
+                res.statusMessage = "The user was updated successfully";
+                return res.status(202).json(result);
+            })
+            .catch(err => {
+                res.statusMessage = "Something is wrong with the database, try again later";
+                return res.status(500).end();
+            });
+    }
+    
 });
 
 app.listen(PORT, () => {

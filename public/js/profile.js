@@ -24,7 +24,6 @@ function fetchProfile(email) {
                     <li>First name: ${responseJSON.firstName} </li>  
                     <li>Last name: ${responseJSON.lastName} </li>
                     <li>Email: ${responseJSON.email} </li>
-                    <li>Password: ${responseJSON.password} </li>
                 </ul>
             </div>`;
         })
@@ -45,7 +44,6 @@ function fetchEmail() {
 
     let results = document.querySelector('.results');
 
-    //ESTE FETCH SE ESTA HACIENDO MAL PORQUE EL SERVER RECIBE EL HEADER COMO UNDEFINED
     fetch(url, settings)
         .then(response => {
             if(response.ok) {
@@ -54,14 +52,11 @@ function fetchEmail() {
             throw new Error(response.statusText);
         })
         .then(responseJSON => {
-            console.log(responseJSON);
             let email = responseJSON.email;
-            console.log(email);
             fetchProfile(email);
         })
         .catch(err => {
             results.innerHTML = `<div> ${err.message} </div>`;
-            //window.location.href = "./../index.html";
         });
 }
 
