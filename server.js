@@ -2,12 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+const uuid = require("uuid");
 const bcrypt = require('bcryptjs');
 const jsonwebtoken = require('jsonwebtoken');
 const {DATABASE_URL, PORT, SECRET_TOKEN, ADMIN_TOKEN} = require('./config');
 const {Users} = require('./models/user-model');
 const cors = require('./middleware/cors');
 const validateSession = require('./middleware/validateSession');
+const { Items } = require( './models/item-model' );
 
 const app = express();
 const jsonParser = bodyParser.json();
@@ -49,7 +51,7 @@ app.post('/api/users/signup', jsonParser, (req, res) => {
             .createUser(newUser)
             .then(result => {
                 console.log(result);
-                return res.status(201).json(result); 
+                return res.status(201).json(result);
             })
             .catch(err => {
                 res.statusMessage = err.message;
@@ -223,6 +225,135 @@ app.patch('/api/users/update', (validateSession, jsonParser), (req, res) => {
     }
     
 });
+
+//Endpoint called from adminPage.js to create a new item
+app.post( '/api/items/create' , (validateSession, jsonParser), (req, res) => {
+    let name = req.body.name;
+    let sku = uuid.v4();
+    let description = req.body.description;
+    let price = req.body.price;
+    let category = req.body.category;
+    let keywords = req.body.keywords;
+    let imgpath = req.body.imgpath;
+
+    if( !name || !sku || !description || !price || !category || !keywords || !imgpath ){
+        res.statusMessage = "One or more parameters is missing, please send all parameters required.";
+
+        return res.status( 406 ).end();
+    }
+
+    let newItem = {name, sku, description, price, category, keywords, imgpath };
+
+    Items
+        .createItem( newItem )
+        .then( createdItem => {
+            return res.status(201).json( createdItem );
+        })
+        .catch( err => {
+            res.statusMessage = "Something went wrong with the Database, please try again later.";
+
+            return res.status( 500 ).end();
+        })
+});
+
+//Endpoint called from adminPage.js to get all existing items from database
+app.get( '/api/items/get' , (validateSession), ( req, res ) => {
+    console.log("Getting all items from database...");
+
+    Items
+        .getAllItems()
+        .then( allItems => {
+            return res.status( 201 ).json( allItems );
+        })
+        .catch( err => {
+            res.statusMessage = "Something went wrong with the database, please try again later.";
+            
+            return res.status( 500 ).end();
+        })
+});
+
+//Endpoint called fron adminPage.js to delete an item
+app.delete('/api/items/delete/:sku', (validateSession), (req, res) => {
+    console.log("Deleting an item...");
+
+    let sku = req.params.sku;
+
+    if(!sku) {
+        res.statusMessage = "The 'sku' paramater is missing";
+        return res.status(406).end();
+    }
+
+    Items
+        .removeItemById(sku)
+        .then(result => {
+            return res.status(201).json(result);
+        })
+        .catch(err => {
+            res.statusMessage = "Something went wrong with the database, please try again later.";
+            return res.status( 500 ).end();
+        })
+});
+
+//Endpoint called from adminPage.js to modify an item
+app.patch('/api/items/modify', (validateSession, jsonParser), (req, res) => {
+    let name = req.body.name;
+    let sku = req.body.sku;
+    let description = req.body.description;
+    let price = req.body.price;
+    let category = req.body.category;
+    let keywords = req.body.keywords;
+    let imgpath = req.body.imgpath;
+
+    let updatedItem = {};
+
+    if(!sku) {
+        res.statusMessage = "The 'sku' is missing in the body";
+        return res.status(406).end();
+    }
+
+    if(name) {
+        console.log(name);
+        updatedItem.name = name;
+    }
+    if(description) {
+        console.log(description);
+        updatedItem.description = description;
+    }
+    if(price) {
+        console.log(price);
+        updatedItem.price = price;
+    }
+    if(category) {
+        console.log(category);
+        updatedItem.category = category;
+    }
+    if(keywords.length != 0) {
+        console.log(keywords);
+        updatedItem.keywords = keywords;
+    }
+    if(imgpath) {
+        console.log(imgpath);
+        updatedItem.imgpath = imgpath;
+    }
+
+    console.log(updatedItem);
+    
+    Items
+        .updateItem(sku, updatedItem)
+        .then(result => {
+            if(result.errmsg) {
+                res.statusMessage = "The 'sku' was not found in the items list";
+                return res.status(409).end();
+            }
+            res.statusMessage = "The item was updated successfully";
+            return res.status(202).json(result);
+        })
+        .catch(err => {
+            console.log(err);
+            res.statusMessage = "Something is wrong with the database, try again later";
+            return res.status(500).end();
+        });
+})
 
 app.listen(PORT, () => {
     console.log("The server is running on port 8000");

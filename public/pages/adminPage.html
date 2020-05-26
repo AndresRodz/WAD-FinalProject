@@ -9,9 +9,6 @@
     </head>
     <body>
         <h1>This is the administration page</h1>
-        <section class="greeting">
-
-        </section>
 
         <button onclick="redirectHome(); return false;">
             Home
@@ -20,6 +17,74 @@
         <button onclick="redirectProfile(); return false;">
             My profile
         </button>
+
+        <section class="greeting">
+
+        </section>
+
+        <label>Please select the desired option</label>
+
+        <button onclick="displayAdd(); return false;">
+            Add new item
+        </button>
+        
+        <button onclick="displayModify(); return false;">
+            Modify existing item
+        </button>
+
+        <button onclick="displayDelete(); return false;">
+            Delete existing item
+        </button>
+
+        <section class="addItem" style="display:none;">
+            <form class="addItemForm">
+                <label for="itemName">
+                    Item name:
+                </label>
+                <input type="text" id="itemName"/>
+
+                <label for="itemDesc">
+                    Item description:
+                </label>
+                <input type="text" id="itemDesc"/>
+
+                <label for="itemPrice">
+                    Item price:
+                </label>
+                <input type="number" id="itemPrice"/>
+
+                <label for="itemCategory">
+                    Item category:
+                </label>
+                <input type="text" id="itemCategory"/>
+
+                <label for="itemKeywords">
+                    Item keywords:
+                </label>
+                <input type="text" id="itemKeywords"/>
+
+                <label for="itemImgPath">
+                    Item image path:
+                </label>
+                <input type="text" id="itemImgPath"/>
+
+                <button type="submit">
+                    Create item
+                </button>
+            </form>
+        </section>
+
+        <section class="modifyItem">
+            
+        </section>
+
+        <section class="deleteItem">
+
+        </section>
+
+        <section class="results">
+       
+        </section>
         <script src="./../js/adminPage.js"></script>
     </body>
 </html>
