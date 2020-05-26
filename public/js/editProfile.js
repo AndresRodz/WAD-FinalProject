@@ -27,7 +27,6 @@ function userUpdateFetch(firstName, lastName, email, password) {
             throw new Error(response.statusText);
         })
         .then(responseJSON => {
-            console.log(responseJSON);
             window.location.href = "/pages/profile.html";
         })
         .catch(err => {
@@ -36,7 +35,6 @@ function userUpdateFetch(firstName, lastName, email, password) {
 }
 
 function watchUpdateForm(event){
-    console.log("entro event listener");
     event.preventDefault();
 
     let firstName = document.getElementById('userFirstName').value;
@@ -95,9 +93,6 @@ function fetchProfile(email) {
         .catch(err => {
             results.innerHTML = `<div> ${err.message} </div>`;
         });
-
-    console.log("cargo info");
-    //watchUpdateForm();
 }
 
 function fetchEmail() {

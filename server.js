@@ -163,8 +163,8 @@ app.get('/api/users/profile', validateSession, (req, res) => {
         });
 });
 
+//Endpoint called from editProfile.js to update profile information
 app.patch('/api/users/update', (validateSession, jsonParser), (req, res) => {
-    console.log(req.body);
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
     let email = req.body.email;
@@ -173,22 +173,17 @@ app.patch('/api/users/update', (validateSession, jsonParser), (req, res) => {
     let updatedUser = {};
 
     if(firstName) {
-        console.log("entro firstname");
         updatedUser.firstName = firstName;
     }
     if(lastName) {
-        console.log("entro lastname");
         updatedUser.lastName = lastName;
     }
     if(email) {
-        console.log("entro email");
         updatedUser.email = email;
     }
     if(password) {
-        console.log("entro password");
         bcrypt.hash(password, 10)
             .then(hashedPassword => {
-                console.log("entro hashed");
                 updatedUser.password = hashedPassword;
 
             Users
