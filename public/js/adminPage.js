@@ -1,4 +1,4 @@
-function fetchModifyItem(skuToModify, nameToModify, descToModify, priceToModify, categoryToModify, imgPathToModify, itemKeywordsToModify) {
+function fetchModifyItem(nameToModify, skuToModify, descToModify, priceToModify, categoryToModify, imgPathToModify, itemKeywordsToModify) {
     let url = "/api/items/modify";
 
     let data = {
@@ -37,6 +37,22 @@ function fetchModifyItem(skuToModify, nameToModify, descToModify, priceToModify,
         .catch( err => {
             results.innerHTML = err.message;
         })
+}
+
+function watchModifyItem(event) {
+    event.preventDefault();
+
+    let nameToModify = document.getElementById('modifyItemName').value;
+    let skuToModify = document.getElementById('modifyItemSku').value;
+    let descToModify = document.getElementById('modifyItemDesc').value;
+    let priceToModify = document.getElementById('modifyItemPrice').value;
+    let categoryToModify = document.getElementById('modifyItemCategory').value;
+    let keywords = document.getElementById('modifyItemKeywords').value;
+    let itemKeywordsToModify = keywords.trim();
+    itemKeywordsToModify = keywords.split(',');
+    let imgPathToModify = document.getElementById('modifyItemImgPath').value;
+
+    fetchModifyItem(nameToModify, skuToModify, descToModify, priceToModify, categoryToModify, imgPathToModify, itemKeywordsToModify);
 }
 
 function fetchGetAllItemsInfo() {
@@ -113,22 +129,6 @@ function fetchGetAllItemsInfo() {
         .catch( err => {
             results.innerHTML = err.message;
         })
-}
-
-function watchModifyItem(event) {
-    event.preventDefault();
-
-    let skuToModify = document.getElementById('modifyItemSku').value;
-    let nameToModify = document.getElementById('modifyItemName').value;
-    let descToModify = document.getElementById('modifyItemDesc').value;
-    let priceToModify = document.getElementById('modifyItemPrice').value;
-    let categoryToModify = document.getElementById('modifyItemCategory').value;
-    let imgPathToModify = document.getElementById('modifyItemImgPath').value;
-    let keywords = document.getElementById('modifyItemKeywords').value;
-    let itemKeywordsToModify = keywords.trim();
-    itemKeywordsToModify = keywords.split(',');
-
-    fetchModifyItem(skuToModify, nameToModify, descToModify, priceToModify, categoryToModify, imgPathToModify, itemKeywordsToModify);
 }
 
 function fetchDeleteItem(sku) {

@@ -2,7 +2,7 @@ const uuid = require("uuid");
 const mongoose = require( 'mongoose' );
 mongoose.set('useFindAndModify', false);
 
-const itemsSchema = mongoose.Schema({ // Declaramos el modelo de cada item
+const itemSchema = mongoose.Schema({ // Declaramos el modelo de cada item
     name : {
         type : String,
         required : true
@@ -34,7 +34,7 @@ const itemsSchema = mongoose.Schema({ // Declaramos el modelo de cada item
     }
 });
 
-const itemsCollection = mongoose.model( 'items' , itemsSchema ); // Declaramos items collection
+const itemsCollection = mongoose.model( 'items' , itemSchema ); // Declaramos items collection
 
 const Items = { // Declaramos funciones de nuestro objeto Items
     createItem : function( newItem ){

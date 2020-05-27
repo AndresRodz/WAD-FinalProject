@@ -7,9 +7,10 @@ const bcrypt = require('bcryptjs');
 const jsonwebtoken = require('jsonwebtoken');
 const {DATABASE_URL, PORT, SECRET_TOKEN, ADMIN_TOKEN} = require('./config');
 const {Users} = require('./models/user-model');
+const {Items} = require('./models/item-model');
+const {Carts} = require('./models/cart-model');
 const cors = require('./middleware/cors');
 const validateSession = require('./middleware/validateSession');
-const { Items } = require( './models/item-model' );
 
 const app = express();
 const jsonParser = bodyParser.json();
@@ -257,13 +258,13 @@ app.post( '/api/items/create' , (validateSession, jsonParser), (req, res) => {
 });
 
 //Endpoint called from adminPage.js to get all existing items from database
-app.get( '/api/items/get' , (validateSession), ( req, res ) => {
+app.get( '/api/items/get' , validateSession, ( req, res ) => {
     console.log("Getting all items from database...");
 
     Items
         .getAllItems()
         .then( allItems => {
-            return res.status( 201 ).json( allItems );
+            return res.status( 200 ).json( allItems );
         })
         .catch( err => {
             res.statusMessage = "Something went wrong with the database, please try again later.";
@@ -273,7 +274,7 @@ app.get( '/api/items/get' , (validateSession), ( req, res ) => {
 });
 
 //Endpoint called fron adminPage.js to delete an item
-app.delete('/api/items/delete/:sku', (validateSession), (req, res) => {
+app.delete('/api/items/delete/:sku', validateSession, (req, res) => {
     console.log("Deleting an item...");
 
     let sku = req.params.sku;
@@ -286,7 +287,7 @@ app.delete('/api/items/delete/:sku', (validateSession), (req, res) => {
     Items
         .removeItemById(sku)
         .then(result => {
-            return res.status(201).json(result);
+            return res.status(200).json(result);
         })
         .catch(err => {
             res.statusMessage = "Something went wrong with the database, please try again later.";
@@ -312,27 +313,21 @@ app.patch('/api/items/modify', (validateSession, jsonParser), (req, res) => {
     }
 
     if(name) {
-        console.log(name);
         updatedItem.name = name;
     }
     if(description) {
-        console.log(description);
         updatedItem.description = description;
     }
     if(price) {
-        console.log(price);
         updatedItem.price = price;
     }
     if(category) {
-        console.log(category);
         updatedItem.category = category;
     }
     if(keywords.length != 0) {
-        console.log(keywords);
         updatedItem.keywords = keywords;
     }
     if(imgpath) {
-        console.log(imgpath);
         updatedItem.imgpath = imgpath;
     }
 
@@ -341,12 +336,14 @@ app.patch('/api/items/modify', (validateSession, jsonParser), (req, res) => {
     Items
         .updateItem(sku, updatedItem)
         .then(result => {
-            if(result.errmsg) {
+            if(!result) {
                 res.statusMessage = "The 'sku' was not found in the items list";
                 return res.status(409).end();
             }
-            res.statusMessage = "The item was updated successfully";
-            return res.status(202).json(result);
+            else {
+                res.statusMessage = "The item was updated successfully";
+                return res.status(202).json(result);
+            }
         })
         .catch(err => {
             console.log(err);
@@ -354,6 +351,54 @@ app.patch('/api/items/modify', (validateSession, jsonParser), (req, res) => {
             return res.status(500).end();
         });
 })
+
+//Endpoint called from home.js to get all the information of an item using its sku
+app.get('/api/items/getBySKU/:sku', validateSession, (req, res) => {
+    let sku = req.params.sku;
+
+    if(!sku) {
+        res.statusMessage = "The 'sku' paramater is missing";
+        return res.status(406).end();
+    }
+
+    Items
+        .findItemById(sku)
+        .then(result => {
+            return res.status(200).json(result);
+        })
+        .catch(err => {
+            res.statusMessage = "Something went wrong with the database, please try again later.";
+            return res.status( 500 ).end();
+        })
+});
+
+//Endpoint called from home.js to add an item to the cart
+app.post('/api/carts/Add', (validateSession, jsonParser), (req, res) => {
+    let name = req.body.name;
+    let sku = req.body.sku;
+    let description = req.body.description;
+    let price = req.body.price;
+    let category = req.body.category;
+    let keywords = req.body.keywords;
+    let imgpath = req.body.imgpath;
+
+    if(!name || !sku || !description || !price || !category || !keywords || !imgpath) {
+        res.statusMessage = "One or more parameters is missing, please send all parameters required.";
+        return res.status(406).end();
+    }
+
+    let item = {name, sku, description, price, category, keywords, imgpath};
+    
+    Carts
+        addToCart(item)
+        .then(result => {
+            return res.status(201).json(result);
+        })
+        .catch(err => {
+            res.statusMessage = "Something went wrong with the database, please try again later.";
+            return res.status(500).end();
+        })
+});
 
 app.listen(PORT, () => {
     console.log("The server is running on port 8000");
