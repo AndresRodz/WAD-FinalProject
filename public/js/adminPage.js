@@ -28,6 +28,8 @@ function fetchModifyItem(nameToModify, skuToModify, descToModify, priceToModify,
             if( response.ok ){
                 return response.json();
             }
+
+            throw new Error( response.statusText );
         })
         .then( responseJSON => {
             console.log(responseJSON);
