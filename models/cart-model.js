@@ -4,7 +4,8 @@ const cartSchema = mongoose.Schema({
    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
-        required: true
+        required: true,
+        unique : true
    },
    items: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -48,10 +49,21 @@ const Carts = {
                 return err;
             });
     },
-    removeItemById: function(userid, itemid) {
+    getCartByUserIdRef: function(id) {
+        return cartsCollection
+            .find({user: id})
+            .populate('user', ['firstName', 'lastName', 'email'])
+            .then(cart => {
+                return cart;
+            })
+            .catch(err => {
+                return err;
+            });
+    },
+    removeItemById: function(userid, item) {
         return cartsCollection
             .findOneAndUpdate( { user : userid },
-                {$pull : { 'items' : itemid } } )
+                {$set : { items : item } } )
             .then(cart => {
                 return cart;
             })
