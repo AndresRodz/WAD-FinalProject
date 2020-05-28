@@ -120,7 +120,7 @@ function fetchItemInfo(event, email, sku) {
 }
 
 function fetchItemsByName(name) {
-    let url = `/api/items/getitemsbyname/${name}`;
+    let url = `/api/items/getByName/${name}`;
 
     let settings = {
         method: 'GET',
@@ -170,7 +170,7 @@ function fetchItemsByName(name) {
 }
 
 function fetchItemsByCategory(category) {
-    let url = `/api/items/getitemsbycategory/${category}`;
+    let url = `/api/items/getByCategory/${category}`;
 
     let settings = {
         method: 'GET',

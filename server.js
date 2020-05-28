@@ -373,7 +373,7 @@ app.patch('/api/items/modify', (validateSession, jsonParser), (req, res) => {
 
 
 //Endpoint called from adminPage.js to get all existing items from database
-app.get('/api/items/getitemsbyname/:name' , validateSession, (req, res) => {
+app.get('/api/items/getByName/:name' , validateSession, (req, res) => {
     console.log("Getting all items from database...");
 
     let name = req.params.name;
@@ -399,7 +399,7 @@ app.get('/api/items/getitemsbyname/:name' , validateSession, (req, res) => {
 
 
 //Endpoint called from adminPage.js to get all existing items from database
-app.get('/api/items/getitemsbycategory/:category' , validateSession, (req, res) => {
+app.get('/api/items/getByCategory/:category' , validateSession, (req, res) => {
     console.log("Getting all items from database...");
 
     let category = req.params.category;
@@ -511,6 +511,45 @@ app.get('/api/checkout/:email', validateSession, (req, res) => {
             return res.status(500).end();
         })
 });
+
+//Endpoint called from checkout.js to remove an item from the cart
+app.delete('/api/checkout/remove/:itemID', (validateSession, jsonParser), (req, res) => {
+    let itemID = req.params.itemID;
+    let email = req.body.email;
+
+    console.log(itemID);
+
+    if(!itemID) {
+        res.statusMessage = "The item ID parameter is missing";
+        return res.status(406).end();
+    }
+
+    Users
+        .getUserByEmail(email)
+        .then(user => {
+            if(!user) {
+                res.statusMessage = "The user does not exist";
+                return res.status(409).end();
+            }
+           let userid = user._id;
+           console.log(userid);
+
+            Carts
+                .removeItemById(userid, itemID)
+                .then(result => {
+                    console.log(result);
+                    return res.status(202).json(result);
+                })
+                .catch(err => {
+                    res.statusMessage = err;
+                    return res.status(500).end();
+                })
+        })
+        .catch(err => {
+            res.statusMessage = err;
+            return res.status(500).end();
+        });
+})
 
 app.listen(PORT, () => {
     console.log("The server is running on port 8000");

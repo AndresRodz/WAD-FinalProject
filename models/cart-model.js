@@ -47,6 +47,17 @@ const Carts = {
             .catch(err => {
                 return err;
             });
+    },
+    removeItemById: function(userid, itemid) {
+        return cartsCollection
+            .findOneAndUpdate( { user : userid },
+                {$pull : { 'items' : itemid } } )
+            .then(cart => {
+                return cart;
+            })
+            .catch(err => {
+                return err;
+            })
     }
 };
 
