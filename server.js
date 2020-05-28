@@ -9,6 +9,7 @@ const {DATABASE_URL, PORT, SECRET_TOKEN, ADMIN_TOKEN} = require('./config');
 const {Users} = require('./models/user-model');
 const {Items} = require('./models/item-model');
 const {Carts} = require('./models/cart-model');
+const {Orders} = require('./models/order-model');
 const cors = require('./middleware/cors');
 const validateSession = require('./middleware/validateSession');
 
@@ -371,7 +372,6 @@ app.patch('/api/items/modify', (validateSession, jsonParser), (req, res) => {
         });
 })
 
-
 //Endpoint called from adminPage.js to get all existing items from database
 app.get('/api/items/getByName/:name' , validateSession, (req, res) => {
     console.log("Getting all items from database...");
@@ -396,7 +396,6 @@ app.get('/api/items/getByName/:name' , validateSession, (req, res) => {
             return res.status(500).end();
         })
 });
-
 
 //Endpoint called from adminPage.js to get all existing items from database
 app.get('/api/items/getByCategory/:category' , validateSession, (req, res) => {
@@ -613,6 +612,110 @@ app.delete('/api/checkout/remove/:itemID', (validateSession, jsonParser), (req, 
         });
 
 })
+
+//Endpoint called from checkout.js to place an order
+app.post('/api/checkout/placeOrder/:email', validateSession, (req, res) => {
+    let email = req.params.email;
+
+    if(!email) {
+        res.statusMessage = "The user email parameter is missing";
+        return res.status(406).end();
+    }
+
+    Users
+        .getUserByEmail(email)
+        .then(user => {
+            if(!user) {
+                res.statusMessage = "The user does not exist";
+                return res.status(409).end();
+            }
+           let userid = user._id;
+
+           Carts
+                .getCartByUserId(userid)
+                .then(cart => {
+
+                    const newOrder = {
+                        user: cart[0].user,
+                        items: cart[0].items
+                    };
+
+                    Orders
+                        .placerOrder(newOrder)
+                        .then(result => {
+                            if(result.length === 0) {
+                                res.statusMessage = "The cart does not exist";
+                                return res.status(406).end();
+                            }
+                            else {
+                                Carts
+                                    .removeAllItems(userid)
+                                    .then(updatedCart => {
+                                        console.log("Se borro el carrito exitosamente");
+                                    })
+                                    .catch(err => {
+                                        res.statusMessage = err;
+                                        return res.status(500).end();
+                                    })
+                                return res.status(201).json(result);
+                            }
+                        })
+                        .catch(err => {
+                            res.statusMessage = err;
+                            return res.status(500).end();
+                        })
+                })
+                .catch(err => {
+                    res.statusMessage = err;
+                    return res.status(500).end();
+                })
+        })
+        .catch(err => {
+            res.statusMessage = err;
+            return res.status(500).end();
+        })
+
+});
+
+//Endpoint called from profile.js to view all orders of a user
+app.get('/api/orders/viewByID/:email', validateSession, (req, res) => {
+    let email = req.params.email;
+
+    if(!email) {
+        res.statusMessage = "The user email parameter is missing";
+        return res.status(406).end();
+    }
+
+    Users
+        .getUserByEmail(email)
+        .then(user => {
+            if(!user) {
+                res.statusMessage = "The user does not exist";
+                return res.status(409).end();
+            }
+           let userid = user._id;
+
+           Orders
+                .getOrdersByUserID(userid)
+                .then(userOrders => {
+                    if(userOrders.length === 0) {
+                        res.statusMessage = "The user does not have any placed orders";
+                        return res.status(409).end();
+                    }
+                    else {
+                        return res.status(201).json(userOrders);
+                    }
+                })
+                .catch(err => {
+                    res.statusMessage = err;
+                    return res.status(500).end();
+                })
+        })
+        .catch(err => {
+            res.statusMessage = err;
+            return res.status(500).end();
+        })
+});
 
 app.listen(PORT, () => {
     console.log("The server is running on port 8000");

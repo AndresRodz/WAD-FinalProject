@@ -70,6 +70,17 @@ const Carts = {
             .catch(err => {
                 return err;
             })
+    },
+    removeAllItems: function(userid) {
+        return cartsCollection
+            .findOneAndUpdate({user: userid},
+                {$set: {items: []}})
+            .then(cart => {
+                return cart;
+            })
+            .catch(err => {
+                return err;
+            })
     }
 };
 

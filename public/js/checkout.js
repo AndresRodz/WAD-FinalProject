@@ -1,3 +1,61 @@
+function checkout(email) {
+    let url = `/api/checkout/placeOrder/${email}`;
+
+    let settings = {
+        method: 'POST',
+        headers: {
+            sessiontoken: localStorage.getItem('token')
+        }
+    };
+
+    let greeting = document.querySelector('.greeting');
+    greeting.innerHTML = "";
+
+    fetch(url, settings)
+        .then(response => {
+            if(response.ok) {
+                return response.json();
+            }
+            throw new Error(response.statusText);
+        })
+        .then(responseJSON => {
+            console.log(responseJSON);
+            greeting.innerHTML = "Your order has been placed";
+            fetchCart(email);
+        })
+        .catch(err => {
+            greeting.innerHTML = `${err.message}`;
+        })
+}
+
+function placeOrder() {
+    let url = "/api/users/email";
+
+    let settings = {
+        method: 'GET',
+        headers: {
+            sessiontoken : localStorage.getItem('token')
+        }
+    };
+
+    let greeting = document.querySelector('.greeting');
+
+    fetch(url, settings)
+        .then(response => {
+            if(response.ok) {
+                return response.json();
+            }
+            throw new Error(response.statusText);
+        })
+        .then(responseJSON => {
+            let email = responseJSON.email;
+            checkout(email);
+        })
+        .catch(err => {
+            greeting.innerHTML = `<div> ${err.message} </div>`;
+        });
+}
+
 function removeItem(email, itemID) {
     let url = `/api/checkout/remove/${itemID}`;
 
