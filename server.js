@@ -439,8 +439,6 @@ app.get('/api/items/getBySKU/:sku', validateSession, (req, res) => {
 app.post('/api/carts/Add', (validateSession, jsonParser), (req, res) => {
     let itemid = req.body.itemid;
     let email = req.body.email;
-
-    console.log(itemid);
     
     if(!itemid || !email) {
         res.statusMessage = "One or more parameters is missing, please send all parameters required.";
@@ -455,12 +453,58 @@ app.post('/api/carts/Add', (validateSession, jsonParser), (req, res) => {
                 return res.status(409).end();
             }
            let userid = user._id;
+
+           Carts
+                .getCartByUserId(userid)
+                .then( result => {
+                    if(result.length === 0){
+                        console.log(result);
+                        console.log("No cart found, creating cart...");
+
+                        const newCart = {
+                            user: userid
+                        }
+                        Carts
+                            .createCart(newCart)
+                            .then( result => {
+                                console.log("se creo carrito");
+                            })
+                            .catch( err => {
+                                res.statusMessage = err;
+                                return res.status(500).end();
+                            })
+                    }
+                    else {
+                        console.log("se encontro carrito!");
+                        console.log(result.length);
+                    }
+                })
+                .catch( err => {
+                    console.log(err);
+                    res.statusMessage = "Something went wrong with the database, please try again later.";
+                    return res.status(500).end();
+                })
+        })
+        .catch( err => {
+            res.statusMessage = err;
+            return res.status(500).end();
+        })
+
+
+    Users
+        .getUserByEmail(email)
+        .then(user => {
+            if(!user) {
+                res.statusMessage = "The user does not exist";
+                return res.status(409).end();
+            }
+           let userid = user._id;
            console.log(userid);
            
            Carts
                 .addItem(userid, itemid)
                 .then(result => {
-                    console.log(result);
+                    console.log("se agrego item");
                     return res.status(201).json(result);
                 })
                 .catch(err => {
@@ -524,6 +568,8 @@ app.delete('/api/checkout/remove/:itemID', (validateSession, jsonParser), (req, 
         return res.status(406).end();
     }
 
+    let arrayOfItems = [];
+
     Users
         .getUserByEmail(email)
         .then(user => {
@@ -535,10 +581,26 @@ app.delete('/api/checkout/remove/:itemID', (validateSession, jsonParser), (req, 
            console.log(userid);
 
             Carts
-                .removeItemById(userid, itemID)
+                .getCartByUserIdRef(userid)
                 .then(result => {
-                    console.log(result);
-                    return res.status(202).json(result);
+                    arrayOfItems = result[0].items;
+                
+                    for(let i = 0; i < arrayOfItems.length; i++){
+                        if(arrayOfItems[i] == itemID){
+                            console.log("borrando item");
+                            arrayOfItems.splice(i, 1);
+                            break;
+                        }
+                    }
+                    Carts
+                        .removeItemById(userid, arrayOfItems)
+                        .then(result => {
+                            return res.status(202).json(result);
+                        })
+                        .catch(err => {
+                            res.statusMessage = err;
+                            return res.status(500).end();
+                        })
                 })
                 .catch(err => {
                     res.statusMessage = err;
@@ -549,6 +611,7 @@ app.delete('/api/checkout/remove/:itemID', (validateSession, jsonParser), (req, 
             res.statusMessage = err;
             return res.status(500).end();
         });
+
 })
 
 app.listen(PORT, () => {

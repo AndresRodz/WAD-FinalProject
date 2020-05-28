@@ -59,7 +59,7 @@ const Items = { // Declaramos funciones de nuestro objeto Items
     },
     getItemsByName : function( itemName ){
         return itemsCollection
-                .find( { name : itemName })
+                .find( { name : {$regex : `.*${itemName}.*` , $options : 'i' } } )
                 .then( item => {
                     return item;
                 })
@@ -69,7 +69,7 @@ const Items = { // Declaramos funciones de nuestro objeto Items
     },
     getItemsByCategory : function( itemCategory ){
         return itemsCollection
-                .find( { category : itemCategory })
+                .find( { category : {$regex : `.*${itemCategory}.*` , $options : 'i'} } )
                 .then( item => {
                     return item;
                 })
