@@ -1,3 +1,21 @@
+function displayItem(event) {
+    event.preventDefault();
+
+    itemSku = event.target.className;
+
+    let itemsArrayTags = document.querySelectorAll('.items');
+
+    for(let i = 0; i < itemsArrayTags.length; i++) {
+        if( itemsArrayTags[i].id !== itemSku ){
+            itemsArrayTags[i].remove();
+        } 
+    }
+
+
+
+
+}
+
 function addToCart(email, itemid) {
     let url = "/api/carts/Add";
 
@@ -125,7 +143,7 @@ function fetchItemsByName(name) {
             for(let i = 0; i<responseJSON.length; i++) {
                 let sku = responseJSON[i].sku;
                 results.innerHTML +=
-                `<div id="${responseJSON[i].sku}">
+                `<div class="items" id="${responseJSON[i].sku}">
                     <ul>
                         <li> Name : ${responseJSON[i].name} </li>
                             <ul>
@@ -138,6 +156,9 @@ function fetchItemsByName(name) {
                             </ul>
                         <button id="${responseJSON[i].sku}" onclick="fetchEmail(event); return false;">
                             Add item to cart
+                        </button>
+                        <button class="${responseJSON[i].sku}" onclick="displayItem(event); return false;">
+                            View item details
                         </button>
                     </ul>
                 </div>`;
@@ -172,7 +193,7 @@ function fetchItemsByCategory(category) {
             for(let i = 0; i<responseJSON.length; i++) {
                 let sku = responseJSON[i].sku;
                 results.innerHTML +=
-                `<div id="${responseJSON[i].sku}">
+                `<div class="items" id="${responseJSON[i].sku}">
                     <ul>
                         <li> Name : ${responseJSON[i].name} </li>
                             <ul>
@@ -185,6 +206,9 @@ function fetchItemsByCategory(category) {
                             </ul>
                         <button id="${responseJSON[i].sku}" onclick="fetchEmail(event); return false;">
                             Add item to cart
+                        </button>
+                        <button class="${responseJSON[i].sku}" onclick="displayItem(event); return false;">
+                            View item details
                         </button>
                     </ul>
                 </div>`;

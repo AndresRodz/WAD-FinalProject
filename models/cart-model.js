@@ -36,10 +36,11 @@ const Carts = {
             return err;
         })
     },
-    getCartByUserId: function(sku) {
+    getCartByUserId: function(id) {
         return cartsCollection
-            .find({user: sku})
+            .find({user: id})
             .populate('user', ['firstName', 'lastName', 'email'])
+            .populate('items', ['name', 'description', 'price'])
             .then(cart => {
                 return cart;
             })

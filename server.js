@@ -476,6 +476,42 @@ app.post('/api/carts/Add', (validateSession, jsonParser), (req, res) => {
     
 });
 
+//Endpoint called from checkout.js to get the cart of the active user
+app.get('/api/checkout/:email', validateSession, (req, res) => {
+    let email = req.params.email;
+
+    if(!email) {
+        res.statusMessage = "The user email parameter is missing";
+        return res.status(406).end();
+    }
+
+    Users
+        .getUserByEmail(email)
+        .then(user => {
+            if(!user) {
+                res.statusMessage = "The user does not exist";
+                return res.status(409).end();
+            }
+           let userid = user._id;
+           console.log(userid);
+           
+           Carts
+                .getCartByUserId(userid)
+                .then(result => {
+                    console.log(result);
+                    return res.status(201).json(result);
+                })
+                .catch(err => {
+                    res.statusMessage = err;
+                    return res.status(500).end();
+                })
+        })
+        .catch(err => {
+            res.statusMessage = err;
+            return res.status(500).end();
+        })
+});
+
 app.listen(PORT, () => {
     console.log("The server is running on port 8000");
 

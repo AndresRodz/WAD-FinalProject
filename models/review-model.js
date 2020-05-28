@@ -9,7 +9,7 @@ const reviewSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    user: {
+    author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         required: true
@@ -31,8 +31,8 @@ const Reviews = {
     },
     getReviewsByUserId: function(id) {
         return reviewsCollection
-            .find({user: id})
-            .populate('user', ['firstName', 'lastName'])
+            .find({author: id})
+            .populate('author', ['firstName', 'lastName'])
             .then(reviews => {
                 return reviews;
             })
