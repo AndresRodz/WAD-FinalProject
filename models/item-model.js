@@ -99,7 +99,7 @@ const Items = { // Declaramos funciones de nuestro objeto Items
     },
     findItemById : function( itemId ){
         return itemsCollection
-                .find( { sku : itemId } )
+                .findOne( { sku : itemId } )
                 .then( allItems => {
                     return allItems;
                 })

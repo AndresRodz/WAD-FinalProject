@@ -1,15 +1,12 @@
-function addToCart(name, sku, description, price, category, keywords, imgpath) {
+function addToCart(email, itemid) {
     let url = "/api/carts/Add";
 
     let data = {
-        name: name,
-        sku: sku,
-        description: description,
-        price: price,
-        category: category,
-        keywords: keywords,
-        imgpath: imgpath
+        email: email,
+        itemid: itemid
     }
+
+    console.log(email, itemid);
     
     let settings = {
         method: 'POST',
@@ -20,7 +17,7 @@ function addToCart(name, sku, description, price, category, keywords, imgpath) {
         body: JSON.stringify(data)
     }
 
-    let results = document.querySelector('.results');
+    let results = document.querySelector('.greeting');
     results.innerHTML = "";
 
     fetch(url, settings)
@@ -34,14 +31,47 @@ function addToCart(name, sku, description, price, category, keywords, imgpath) {
             results.innerHTML = "Item added to the cart successfully.";
         })
         .catch(err => {
-
+            results.innerHTML = err.message;
         });
 }
 
-function fetchItemInfo(event, sku) {
+function fetchEmail(event) {
+    let url = "/api/users/email";
+    
+    sku = event.target.id;
+
+    console.log(event.target);
+
+    console.log(sku);
+
+    let settings = {
+        method: 'GET',
+        headers: {
+            sessiontoken : localStorage.getItem('token')
+        }
+    };
+
+    let results = document.querySelector('.results');
+
+    fetch(url, settings)
+        .then(response => {
+            if(response.ok) {
+                return response.json();
+            }
+            throw new Error(response.statusText);
+        })
+        .then(responseJSON => {
+            let email = responseJSON.email;
+            fetchItemInfo(event, email, sku);
+        })
+        .catch(err => {
+            results.innerHTML = `<div> ${err.message} </div>`;
+        });
+}
+
+function fetchItemInfo(event, email, sku) {
     event.preventDefault();
     console.log("entro boton");
-    console.log(sku);
 
     let url = `/api/items/getBySKU/${sku}`;
 
@@ -53,7 +83,6 @@ function fetchItemInfo(event, sku) {
     }
 
     let results = document.querySelector('.results');
-    results.innerHTML = "";
 
     fetch(url, settings)
         .then(response => {
@@ -63,23 +92,17 @@ function fetchItemInfo(event, sku) {
             throw new Error(response.statusText);
         })
         .then(responseJSON => {
-            let name = responseJSON.name;
-            let sku = responseJSON.sku;
-            let description = responseJSON.description;
-            let price = responseJSON.price;
-            let category = responseJSON.category;
-            let keywords = responseJSON.keywords;
-            let imgpath = responseJSON.imgpath;
+            let itemid = responseJSON._id;
 
-            addToCart(name, sku, description, price, category, keywords, imgpath);
+            addToCart(email, itemid);
         })
         .catch(err => {
             results.innerHTML = err.message;
         });
 }
 
-function fetchItems() {
-    let url = "/api/items/get";
+function fetchItemsByName(name) {
+    let url = `/api/items/getitemsbyname/${name}`;
 
     let settings = {
         method: 'GET',
@@ -89,7 +112,7 @@ function fetchItems() {
     }
 
     let results = document.querySelector('.results');
-    results.innerHTML = "These are the items currently available:";
+    results.innerHTML = "These are the items currently available by the search criteria:";
 
     fetch(url, settings)
         .then(response => {
@@ -113,7 +136,7 @@ function fetchItems() {
                                 <li> Keywords : ${responseJSON[i].keywords.toString()} </li>
                                 <li> Img Path : ${responseJSON[i].imgpath} </li>
                             </ul>
-                        <button onclick="fetchItemInfo(event, _${sku}); return false;">
+                        <button id="${responseJSON[i].sku}" onclick="fetchEmail(event); return false;">
                             Add item to cart
                         </button>
                     </ul>
@@ -123,7 +146,85 @@ function fetchItems() {
         .catch( err => {
             results.innerHTML = err.message;
         })
-        console.log("termino fetch");
+}
+
+function fetchItemsByCategory(category) {
+    let url = `/api/items/getitemsbycategory/${category}`;
+
+    let settings = {
+        method: 'GET',
+        headers: {
+            sessiontoken: localStorage.getItem('token')
+        }
+    }
+
+    let results = document.querySelector('.results');
+    results.innerHTML = "These are the items currently available by the search criteria:";
+
+    fetch(url, settings)
+        .then(response => {
+            if(response.ok) {
+                return response.json();
+            }
+            throw new Error(response.statusText);
+        })
+        .then(responseJSON => {
+            for(let i = 0; i<responseJSON.length; i++) {
+                let sku = responseJSON[i].sku;
+                results.innerHTML +=
+                `<div id="${responseJSON[i].sku}">
+                    <ul>
+                        <li> Name : ${responseJSON[i].name} </li>
+                            <ul>
+                                <li> SKU : ${responseJSON[i].sku} </li>
+                                <li> Description : ${responseJSON[i].description} </li>
+                                <li> Price : ${responseJSON[i].price} </li>
+                                <li> Category : ${responseJSON[i].category} </li>
+                                <li> Keywords : ${responseJSON[i].keywords.toString()} </li>
+                                <li> Img Path : ${responseJSON[i].imgpath} </li>
+                            </ul>
+                        <button id="${responseJSON[i].sku}" onclick="fetchEmail(event); return false;">
+                            Add item to cart
+                        </button>
+                    </ul>
+                </div>`;
+            }
+        })
+        .catch( err => {
+            results.innerHTML = err.message;
+        })
+}
+
+function watchSearchItem(event) {
+
+    let searchItemForm = document.querySelector( '.searchBar' );
+
+    let results = document.querySelector( '.results' );
+    let greeting = document.querySelector( '.greeting' );
+
+    results.innerHTML = "";
+    greeting.innerHTML = "";
+    
+
+    searchItemForm.addEventListener( 'submit' , ( event ) => {
+        event.preventDefault();
+
+        let searchTerm = document.getElementById( 'myInput' ).value;
+
+        console.log("clickeaste search!");
+        console.log(searchTerm);
+
+        let searchOption = document.getElementById( 'options' ).value;
+
+        if( searchOption === 'Name' ){
+            fetchItemsByName(searchTerm);
+        }
+        if( searchOption === 'Category' ){
+            fetchItemsByCategory(searchTerm);
+        }
+
+
+    })
 }
 
 function redirectProfile() {
@@ -139,7 +240,7 @@ function redirectCheckout() {
 }
 
 function init() {
-    fetchItems();
+    watchSearchItem();
 }
 
 init();

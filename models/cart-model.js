@@ -8,23 +8,33 @@ const cartSchema = mongoose.Schema({
    },
    items: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'items',
-        required: true
+        ref: 'items'
     }]
 });
 
 const cartsCollection = mongoose.model('carts', cartSchema);
 
 const Carts = {
-    addItem: function(newItem) {
+    createCart: function(newCart){
         return cartsCollection
-            .create(newItem)
-            .then(item => {
-                return item;
+            .create(newCart)
+            .then(cart => {
+                return cart;
             })
             .catch(err => {
-                throw new Error(err.message);
-            });
+                return err;
+            })
+    },
+    addItem: function(id, item) {
+        return cartsCollection
+        .updateOne({user : id},
+            {$push : {items : item}})
+        .then(cart => {
+            return cart;
+        })
+        .catch( err => {
+            return err;
+        })
     },
     getCartByUserId: function(sku) {
         return cartsCollection
@@ -34,7 +44,7 @@ const Carts = {
                 return cart;
             })
             .catch(err => {
-                throw new Error(err.message);
+                return err;
             });
     }
 };
