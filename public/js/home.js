@@ -1,7 +1,48 @@
+function fetchReviews(itemid) {
+    let url = `/api/reviews/getById/${itemid}`;
+
+    let settings = {
+        method: 'GET',
+        headers: {
+            sessiontoken: localStorage.getItem('token')
+        }
+    }
+
+    let results = document.querySelector('.results');
+    results.innerHTML += "These are the reviews available for this item:";
+
+    fetch(url, settings)
+        .then(response => {
+            if(response.ok) {
+                return response.json();
+            }
+        })
+        .then(responseJSON => {
+            console.log(responseJSON);
+            for(let i = 0; i < responseJSON.length; i++) {
+                results.innerHTML +=
+                `<div class="reviews" id="${responseJSON[i]._id}">
+                    <ul>
+                        <li> Author : ${responseJSON[i].author.firstName} ${responseJSON[i].author.lastName} </li>
+                            <ul>
+                                <li> Title: ${responseJSON[i].title} </li>
+                                <li> Content: ${responseJSON[i].content} </li>
+                            </ul>
+                    </ul>
+                </div>`;
+            }
+        })
+        .catch(err => {
+            results.innerHTML += "This item does not have any reviews yet";
+        })
+}
+
 function displayItem(event) {
     event.preventDefault();
 
     itemSku = event.target.className;
+    itemid = event.target.id;
+    console.log(itemid);
 
     let itemsArrayTags = document.querySelectorAll('.items');
 
@@ -11,9 +52,7 @@ function displayItem(event) {
         } 
     }
 
-
-
-
+    fetchReviews(itemid);
 }
 
 function addToCart(email, itemid) {
@@ -140,8 +179,9 @@ function fetchItemsByName(name) {
             throw new Error(response.statusText);
         })
         .then(responseJSON => {
+            console.log("este es el responseJSON");
+            console.log(responseJSON);
             for(let i = 0; i<responseJSON.length; i++) {
-                let sku = responseJSON[i].sku;
                 results.innerHTML +=
                 `<div class="items" id="${responseJSON[i].sku}">
                     <ul>
@@ -157,7 +197,7 @@ function fetchItemsByName(name) {
                         <button id="${responseJSON[i].sku}" onclick="fetchEmail(event); return false;">
                             Add item to cart
                         </button>
-                        <button class="${responseJSON[i].sku}" onclick="displayItem(event); return false;">
+                        <button id="${responseJSON[i]._id}" class="${responseJSON[i].sku}" onclick="displayItem(event); return false;">
                             View item details
                         </button>
                     </ul>
@@ -190,8 +230,9 @@ function fetchItemsByCategory(category) {
             throw new Error(response.statusText);
         })
         .then(responseJSON => {
+            console.log("este es el responseJSON");
+            console.log(responseJSON);
             for(let i = 0; i<responseJSON.length; i++) {
-                let sku = responseJSON[i].sku;
                 results.innerHTML +=
                 `<div class="items" id="${responseJSON[i].sku}">
                     <ul>
@@ -207,7 +248,7 @@ function fetchItemsByCategory(category) {
                         <button id="${responseJSON[i].sku}" onclick="fetchEmail(event); return false;">
                             Add item to cart
                         </button>
-                        <button class="${responseJSON[i].sku}" onclick="displayItem(event); return false;">
+                        <button id="${responseJSON[i]._id}" class="${responseJSON[i].sku}" onclick="displayItem(event); return false;">
                             View item details
                         </button>
                     </ul>

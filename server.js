@@ -697,7 +697,7 @@ app.get('/api/orders/viewByID/:email', validateSession, (req, res) => {
            let userid = user._id;
 
            Orders
-                .getOrdersByUserID(userid)
+                .getOrdersByUserIDPop(userid)
                 .then(userOrders => {
                     if(userOrders.length === 0) {
                         res.statusMessage = "The user does not have any placed orders";
@@ -718,7 +718,7 @@ app.get('/api/orders/viewByID/:email', validateSession, (req, res) => {
         })
 });
 
-//Endpoint called from profile.js to submit a review of an item
+//Endpoint called from profile.js to submit a review for an item
 app.post('/api/reviews/submit/:email', (validateSession, jsonParser), (req, res) => {
     let email = req.params.email;
     let title = req.body.title;
@@ -781,6 +781,35 @@ app.post('/api/reviews/submit/:email', (validateSession, jsonParser), (req, res)
             res.statusMessage = err;
             return res.status(500).end();
         });
+})
+
+//Endpoint called from home.js to obtain reviews of an item
+app.get('/api/reviews/getById/:id', validateSession, (req, res) => {
+    let id = req.params.id;
+
+    console.log("entro al endpoint");
+    console.log(id);
+
+    if(!id) {
+        res.statusMessage = "The 'id' paramater is missing";
+        return res.status(406).end();
+    }
+
+    Reviews
+        .getReviewsByItemId(id)
+        .then(reviews => {
+            if(reviews.length === 0) {
+                res.statusMessage = "There are no reviews for this item";
+                return res.status(409).end();
+            }
+            else {
+                return res.status(200).json(reviews);
+            }
+        })
+        .catch(err => {
+            res.statusMessage = err;
+            return res.status(500).end();
+        })
 })
 
 app.listen(PORT, () => {

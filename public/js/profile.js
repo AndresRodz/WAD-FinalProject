@@ -117,11 +117,11 @@ function fetchOrders(email) {
             throw new Error(response.statusText);
         })
         .then(responseJSON => {
+            results.innerHTML += "These are your past orders:";
             for(let i = 0; i < responseJSON.length; i++) {
 
                 results.innerHTML +=
-                `These are your past orders:
-                <div>
+                `<div>
                     <ul>
                         <li>Order id: ${responseJSON[i]._id}</li>
                             <ul class="itemsOrder${i}">
@@ -134,12 +134,16 @@ function fetchOrders(email) {
                     document.querySelector(`.itemsOrder${i}`).innerHTML +=
                     `<li>
                         <div class="item${i}_${j}">
-                            ${responseJSON[i].items[j]}
-                            <button id="item${i}_${j}" class="${responseJSON[i].items[j]}" onclick="writeReview(event); return false;">
+                            Item name : ${responseJSON[i].items[j].name}
+                            <button id="item${i}_${j}" class="${responseJSON[i].items[j]._id}" onclick="writeReview(event); return false;">
                                 Write review
                             </button>
                         </div>
-                    </li>`;
+                    </li>
+                    <ul> 
+                        <li> SKU : ${responseJSON[i].items[j]._id} </li>
+                        <li> Item Price : ${responseJSON[i].items[j].price} </li>
+                    </ul>`;
                 }
             }
         })

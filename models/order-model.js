@@ -34,6 +34,17 @@ const Orders = {
             .catch(err => {
                 return err;
             })
+    },
+    getOrdersByUserIDPop: function(userid){
+        return ordersCollection
+            .find({ user : userid })
+            .populate( 'items', ['name' , 'price'])
+            .then( orders => {
+                return orders;
+            })
+            .catch( err => {
+                return err;
+            })
     }
 };
 

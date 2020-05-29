@@ -31,7 +31,7 @@ const Reviews = {
                 return review;
             })
             .catch(err => {
-                throw new Error(err.message);
+                return err;
             });
     },
     getReviewsByUserId: function(id) {
@@ -42,8 +42,19 @@ const Reviews = {
                 return reviews;
             })
             .catch(err => {
-                throw new Error(err.message);
+                return err;
             });
+    },
+    getReviewsByItemId: function(id) {
+        return reviewsCollection
+            .find({item: id})
+            .populate('author', ['firstName', 'lastName'])
+            .then(reviews => {
+                return reviews;
+            })
+            .catch(err => {
+                return err;
+            })
     }
 };
 

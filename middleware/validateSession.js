@@ -5,8 +5,6 @@ function validateSession(req, res, next) {
     console.log("Validating...");
     const {sessiontoken} = req.headers;
 
-    console.log(sessiontoken);
-
     jsonwebtoken.verify(sessiontoken, SECRET_TOKEN, (err, decoded) => {
         if(err) {
             res.statusMessage = "Session expired! ";
