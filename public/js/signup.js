@@ -47,7 +47,7 @@ function watchSignupForm(){
         let token = document.getElementById('adminToken').value;
 
         userSignupFetch(firstName, lastName, email, password, token);
-    })
+    });
 }
 
 function init(){
