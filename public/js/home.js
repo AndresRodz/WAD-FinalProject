@@ -187,7 +187,7 @@ function fetchItemsByName(name) {
                 console.log(noSpaceItemImage);
                 results.innerHTML +=
                 `<div class="items" id="${responseJSON[i].sku}">
-                    <img src="../images/${noSpaceItemImage}.jpg" height=150px width=150px/>
+                    <img class"itemImages" src="../images/${noSpaceItemImage}.jpg" />
                     <ul>
                         <li> Name : ${responseJSON[i].name} </li>
                             <ul>
@@ -241,7 +241,7 @@ function fetchItemsByCategory(category) {
                 let noSpaceItemImage = itemImageName.replace(/\s+/g, '');
                 results.innerHTML +=
                 `<div class="items" id="${responseJSON[i].sku}">
-                    <img src="../images/${noSpaceItemImage}.jpg" height=150px width=150px/>
+                    <img class="itemImages" src="../images/${noSpaceItemImage}.jpg" />
                     <ul>
                         <li> Name : ${responseJSON[i].name} </li>
                             <ul>
