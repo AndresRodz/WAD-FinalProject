@@ -7,30 +7,38 @@
         <link href="./css/index.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
-        <form class="loginForm">
-            <label for="userEmail">
-                Email:
-            </label>
-            <input type="text" id="userEmail" />
+        <div class="header">
+            <h1>
+                buyToGo
+            </h1>
+        </div>
 
-            <label for="userPassword">
-                Password:
-            </label>
-            <input type="password" id="userPassword" />
-
-            <button type="submit">
-                Login
+        <div class="main">
+            <form class="loginForm">
+                <label for="userEmail">
+                    Email:
+                </label>
+                <input type="text" id="userEmail" class="myInput"/><br><br>
+    
+                <label for="userPassword">
+                    Password:
+                </label>
+                <input type="password" id="userPassword" class="myInput"/><br><br>
+    
+                <button type="submit">
+                    Login
+                </button>
+            </form><br><br>
+    
+            <label>Still not a user?</label>
+            <button onclick="redirectSignup(); return false;">
+                Sign up
             </button>
-        </form>
-
-        <label>Still not a user?</label>
-        <button onclick="redirectSignup(); return false;">
-            Sign up
-        </button>
-
-        <section class="results">
-
-        </section>
+    
+            <section class="results">
+    
+            </section>
+        </div>
         <script src="./js/index.js"></script>
     </body>
 </html>
