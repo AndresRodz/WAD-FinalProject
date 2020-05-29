@@ -4,18 +4,23 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width">
         <title>Shopping Web App</title>
-        <link href="./../css/profile.css" rel="stylesheet" type="text/css" />
+        <link href="./../css/home.css" rel="stylesheet" type="text/css" />
         <script src="./../js/generic.js"></script>
     </head>
     <body>
-        <h1>This is your profile</h1>
-        <button onclick="redirectHome(); return false;">
-            Home
-        </button>
+        <div class="header">
+            <h1>This is your profile</h1>
+        </div>
+        
+        <div class="navDivButtons">
+            <button onclick="redirectHome(); return false;" class="navButtons">
+                Home
+            </button>
 
-        <button onclick="redirectEditProfile(); return false;">
-            Edit profile
-        </button>
+            <button onclick="redirectEditProfile(); return false;" class="navButtons">
+                Edit profile
+            </button>
+        </div>
         
         <section class="results">
 

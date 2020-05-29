@@ -4,39 +4,48 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width">
         <title>Shopping Web App</title>
-        <link href="./css/index.css" rel="stylesheet" type="text/css" />
+        <link href="./../css/index.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
-        <form class="signupForm">
-            <label for="userFirstName">
-                First name:
-            </label>
-            <input type="text" id="userFirstName"/>
 
-            <label for="userLastName">
-                Last name:
-            </label>
-            <input type="text" id="userLastName"/>
+        <div class="header">
+            <h1>
+                buyToGo
+            </h1>
+        </div>
 
-            <label for="userEmail">
-                Email:
-            </label>
-            <input type="text" id="userEmail"/>
+        <div class="main">
+            <form class="signupForm">
+                <label for="userFirstName">
+                    First name:
+                </label>
+                <input type="text" id="userFirstName" class="myInput"/><br><br>
 
-            <label for="userPassword">
-                Password:
-            </label>
-            <input type="password" id="userPassword"/>
+                <label for="userLastName">
+                    Last name:
+                </label>
+                <input type="text" id="userLastName" class="myInput"/><br><br>
 
-            <label for="adminToken">
-                Admin token:
-            </label>
-            <input type="password" id="adminToken"/>
+                <label for="userEmail">
+                    Email:
+                </label>
+                <input type="text" id="userEmail" class="myInput"/><br><br>
 
-            <button type="submit">
-                Sign up
-            </button>
-        </form>
+                <label for="userPassword">
+                    Password:
+                </label>
+                <input type="password" id="userPassword" class="myInput"/><br><br>
+
+                <label for="adminToken">
+                    Admin token:
+                </label>
+                <input type="password" id="adminToken" class="myInput"/><br><br>
+
+                <button type="submit">
+                    Sign up
+                </button>
+            </form>
+        </div>
 
         <section class="results">
 

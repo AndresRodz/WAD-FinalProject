@@ -8,18 +8,24 @@
         <script src="./../js/generic.js"></script>
     </head>
     <body>
-        <h1>This is your profile</h1>
+        <div class="header">
+            <h1>Edit your profile</h1>
+        </div>
+        
+        <div class="navDivButtons">
+            <button onclick="watchUpdateForm(event); return false;" class="navButtons">
+                Update
+            </button>
+
+            <button onclick="redirectProfile(event); return false;" class="navButtons">
+                Cancel
+            </button>
+        </div>
         <section class="results">
        
         </section>
 
-        <button onclick="watchUpdateForm(event); return false;">
-            Update
-        </button>
-
-        <button onclick="redirectProfile(event); return false;">
-            Cancel
-        </button>
+        
         <script src="./../js/editProfile.js"></script>
     </body>
 </html>
