@@ -8,37 +8,47 @@
         <script src="./../js/generic.js"></script>
     </head>
     <body>
-        <h1>This is the homepage</h1>
+        <div class="header">
+            <h1>buyToGo</h1>
+            <p>©2020 Enrique Mota, Andres Rodriguez</p>
+        </div>
 
-        <button onclick="redirectProfile(); return false;">
-            My profile
-        </button>
+        <div class="navDivButtons">
+            <button class="navButtons" onclick="redirectProfile(); return false;">
+                My profile
+            </button>
 
-        <button onclick="redirectAdminPage(); return false;">
-            Admin page
-        </button>
+            <button class="navButtons" onclick="redirectAdminPage(); return false;">
+                Admin page
+            </button>
 
-        <button onclick="redirectCheckout(); return false;">
-            Checkout
-        </button>
+            <button class="navButtons" onclick="redirectCheckout(); return false;">
+                Checkout
+            </button>
+        </div>
 
         <section class="greeting">
 
         </section>
         
-        <form class="searchBar">
-            <input type="text" id="myInput" placeholder="Search for items..">
+        <div class="searchZone">
+            <form class="searchBar">
+                <select id="options" size="1" class="select-css">
+                    <option value="Category">Category</option>
+                    <option value="Name">Name</option>
+                    <option value="Keyword">Keyword</option>
+                </select> 
+                
+                <input type="text" id="myInput" placeholder="Search for items..">
+                <button type="submit" class="searchItemsButton">
+                    Search items
+                </button>
 
-            <select id="options" size="1">
-                <option value="Category">Category</option>
-                <option value="Name">Name</option>
-                <option value="Keyword">Keyword</option>
-              </select> 
+                
 
-            <button type="submit">
-                Search items
-            </button>
-        </form>
+
+            </form>
+        </div>
         
 
         <section class="results">
@@ -46,5 +56,3 @@
         </section>
         
         <script src="./../js/home.js"></script>
-    </body>
-</html>
