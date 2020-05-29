@@ -21,7 +21,7 @@ This is a list of all endpoints used for this project, alognside a brief descrip
     <li>'/api/items/delete/:sku': Endpoint called fron adminPage.js to delete an item</li>
     <li>'/api/items/modify': Endpoint called from adminPage.js to modify an item</li>
     <li>'/api/items/getByName/:name': Endpoint called from adminPage.js to get all existing items by name</li>
-    <li>'/api/items/getByCategory/:category': Endpoint called from adminPage.js to get all existing items by category<li>
+<li>'/api/items/getByCategory/:category': Endpoint called from adminPage.js to get all existing items by category</li>
     <li>'/api/items/getBySKU/:sku': Endpoint called from home.js to get all the information of an item using its sku</li>
     <li>'/api/carts/Add': Endpoint called from home.js to add an item to the cart</li>
     <li>'/api/checkout/:email': Endpoint called from checkout.js to get the cart of the active user</li>
