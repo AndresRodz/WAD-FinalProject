@@ -182,8 +182,12 @@ function fetchItemsByName(name) {
             console.log("este es el responseJSON");
             console.log(responseJSON);
             for(let i = 0; i<responseJSON.length; i++) {
+                let itemImageName = responseJSON[i].name.toLowerCase();
+                let noSpaceItemImage = itemImageName.replace(/\s+/g, '');
+                console.log(noSpaceItemImage);
                 results.innerHTML +=
                 `<div class="items" id="${responseJSON[i].sku}">
+                    <img src="../images/${noSpaceItemImage}.jpg" height=150px width=150px/>
                     <ul>
                         <li> Name : ${responseJSON[i].name} </li>
                             <ul>
@@ -233,8 +237,11 @@ function fetchItemsByCategory(category) {
             console.log("este es el responseJSON");
             console.log(responseJSON);
             for(let i = 0; i<responseJSON.length; i++) {
+                let itemImageName = responseJSON[i].name.toLowerCase();
+                let noSpaceItemImage = itemImageName.replace(/\s+/g, '');
                 results.innerHTML +=
                 `<div class="items" id="${responseJSON[i].sku}">
+                    <img src="../images/${noSpaceItemImage}.jpg" height=150px width=150px/>
                     <ul>
                         <li> Name : ${responseJSON[i].name} </li>
                             <ul>
