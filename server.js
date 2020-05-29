@@ -134,7 +134,7 @@ app.post('/api/users/login', jsonParser, (req, res) => {
         });
 });
 
-//Endpoint called from each .html to validate the user session
+//Endpoint called to validate the user session
 app.get('/api/users/validate', validateSession, (req, res) => {
     const {sessiontoken} = req.headers;
 
@@ -148,7 +148,7 @@ app.get('/api/users/validate', validateSession, (req, res) => {
     });
 });
 
-//Endpoint called from profile.js and editProfile.js to fetch the active email in the session token
+//Endpoint called to fetch the active email in the session token
 app.get('/api/users/email', (req, res) => {
     const {sessiontoken} = req.headers;
 
@@ -373,7 +373,7 @@ app.patch('/api/items/modify', (validateSession, jsonParser), (req, res) => {
         });
 })
 
-//Endpoint called from adminPage.js to get all existing items from database
+//Endpoint called from adminPage.js to get all existing items by name
 app.get('/api/items/getByName/:name' , validateSession, (req, res) => {
     console.log("Getting all items from database...");
 
@@ -398,7 +398,7 @@ app.get('/api/items/getByName/:name' , validateSession, (req, res) => {
         })
 });
 
-//Endpoint called from adminPage.js to get all existing items from database
+//Endpoint called from adminPage.js to get all existing items by category
 app.get('/api/items/getByCategory/:category' , validateSession, (req, res) => {
     console.log("Getting all items from database...");
 
@@ -783,7 +783,7 @@ app.post('/api/reviews/submit/:email', (validateSession, jsonParser), (req, res)
         });
 })
 
-//Endpoint called from home.js to obtain reviews of an item
+//Endpoint called from home.js to obtain all the reviews of an item
 app.get('/api/reviews/getById/:id', validateSession, (req, res) => {
     let id = req.params.id;
 
